@@ -15,26 +15,26 @@ function Dashboard() {
   return (
     <>
       <Container className='container-outer col-md-6 '>
-        <Row className="colb">
+        <Row className="">
           <Col>
             <HeaderSection />
           </Col>
         </Row>
-        <Row className="justify-content-center colb">
+        <Row className="justify-content-center ">
           <Col >
             <WarningSection />
           </Col>
         </Row>
-        <Row className='justify-content-center colb'>
-          <Col className="colb">
+        <Row className='justify-content-center '>
+          <Col className="">
             <FeedSection />
           </Col>
-          <Col className='colb'>
+          <Col className=''>
             <EntertainmentSection />
           </Col>
         </Row>
         <Row>
-          <Col className='colb'>
+          <Col className=''>
             <WaterSection />
           </Col>
         </Row>
