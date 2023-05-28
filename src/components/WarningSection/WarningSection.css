@@ -7,8 +7,9 @@
     margin-bottom: 20px;
     border: #d50d0d solid 3px;
     height: 50px;
+    border-radius: 7px;
 }
  .warning-msg{
    margin-top: 9px;
-   
+
  }
