@@ -6,7 +6,7 @@ import './WarningSection.css'
 function WarningSection() {
   return (
     <Container>
-        <div className="w-outer" >No Warnings For Now</div>
+        <div className="w-outer" ><p className='warning-msg'> No Warnings For Now</p></div>
     </Container>
   )
 }

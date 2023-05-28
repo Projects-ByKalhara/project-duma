@@ -1,8 +1,16 @@
+
+.w-main{
+    background-image: linear-gradient(180deg,rgb(255, 255, 255), rgb(106, 187, 240), rgb(255, 255, 255));
+}
+
+
 .w-title{
     font-size: 20px;
     font-weight: bold;
-    color: #d50d0d;
+    color: #5e20b0;
     margin-bottom: 10px;
+    margin-top: 10px;
+    
 }
 
 .w-indicator{
@@ -10,4 +18,5 @@
     font-weight: bold;
     color: #d50d0d;
     margin-bottom: 10px;
+   
 }

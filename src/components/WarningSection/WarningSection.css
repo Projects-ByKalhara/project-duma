@@ -5,6 +5,10 @@
     align-items: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    border: #d50d0d solid 1px;
+    border: #d50d0d solid 3px;
     height: 50px;
 }
+ .warning-msg{
+   margin-top: 9px;
+   
+ }

@@ -20,7 +20,7 @@ function WaterSection() {
 
 
     return (
-        <Container>
+        <Container className='w-main'>
             <div className="w-title">
                 Water Level
             </div>
