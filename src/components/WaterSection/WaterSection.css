@@ -1,6 +1,6 @@
 
 .w-main{
-    background-image: linear-gradient(180deg,rgb(213, 248, 255), rgb(106, 187, 240), rgb(255, 255, 255));
+    background-image: linear-gradient(to top, #b8d6ff, #b1d1ff, #aaccff, #a4c6ff, #9ec1ff, #98bcff, #93b8ff, #8eb3ff, #87aeff, #81a9ff, #7aa4ff, #749fff);
     border-radius: 7px;
 }
 
@@ -8,7 +8,7 @@
 .w-title{
     font-size: 20px;
     font-weight: bold;
-    color: #5e20b0;
+    color: #0b30a0;
     margin-bottom: 10px;
     margin-top: 10px;
     

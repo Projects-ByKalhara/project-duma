@@ -23,3 +23,7 @@
 .colb{
     border: #d50d0d solid 1px;
 }
+
+.container-outer{
+    background-image: linear-gradient(to top, #b8d6ff, #b1d1ff, #aaccff, #a4c6ff, #9ec1ff, #98bcff, #93b8ff, #8eb3ff, #87aeff, #81a9ff, #7aa4ff, #749fff);
+}
