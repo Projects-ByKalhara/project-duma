@@ -11,7 +11,7 @@ function SwitchLED() {
 
     useEffect(() => {
         const db = getDatabase();
-        const ledRef = ref(db,'LED/value');
+        const ledRef = ref(DB,'LED/value');
         onValue(ledRef, (snapshot) => {
             const data = snapshot.val();
             setChecked(data);

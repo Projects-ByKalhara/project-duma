@@ -1,0 +1,10 @@
+.w-outer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: #d50d0d solid 1px;
+    height: 50px;
+}
