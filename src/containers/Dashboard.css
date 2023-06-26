@@ -3,10 +3,11 @@
     border: 5px solid #27104e;
     border-radius: 20px;
     background-color: #050A30; 
+    margin-top: 20px;
 }
 
 .col-10{
-    height: 90%;
+    height: auto;
 }
 
 .row-2{
