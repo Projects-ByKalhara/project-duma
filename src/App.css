@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 
 .App {
-  width: 100vw;
+  max-width: 100vw;
   height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  overflow-x: hidden !important;
 }

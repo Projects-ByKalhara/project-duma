@@ -1,9 +1,13 @@
 .container-outer{
-    height: 70%;
+    height: auto;
     border: 5px solid #27104e;
     border-radius: 20px;
     background-color: #050A30; 
     margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow-x: hidden !important;
 }
 
 .col-10{
