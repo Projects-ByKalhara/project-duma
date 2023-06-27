@@ -12,7 +12,6 @@ function VideoSection() {
   const [image, setImage] = useState('');
   const [predictions, setPredictions] = useState([]);
   const [checkedVideo, setCheckedVideo] = useState(false);
-  const [dogDetected, setDogDetected] = useState(false);
   const imageNewRef = useRef();
   let imageUrl = `data:image/jpg;base64,${image}`;
   imageUrl = imageUrl.replace(/[""]/g, '');
@@ -31,7 +30,7 @@ function VideoSection() {
       await detectObjectsOnImage(imageElement);
     };
 
-    const videoRef = ref(DB, 'Video/videoStatus');
+    const videoRef = ref(DB, 'ObjectDetection/videoStatus');
     onValue(videoRef, (snapshot) => {
       const data = snapshot.val();
       setCheckedVideo(data);
@@ -41,7 +40,7 @@ function VideoSection() {
 
   const handleChangeVideo = () => {
     setCheckedVideo(!checkedVideo);
-    set(ref(DB, 'Video/videoStatus'), !checkedVideo);
+    set(ref(DB, 'ObjectDetection/videoStatus'), !checkedVideo);
   };
 
   const normalizePredictions = (predictions, imgSize) => {
@@ -70,12 +69,17 @@ function VideoSection() {
     const predictions = await model.detect(imageElement, 6);
     const normalizedPredictions = normalizePredictions(predictions, imgSize);
     setPredictions(normalizedPredictions);
-    if (predictions[0].class=='dog') {
-      set(ref(DB, 'Video/dogDetected'), true);
-    } else {
-      setDogDetected(false);
-      set(ref(DB, 'Video/dogDetected'), false);
+    try{
+      if (predictions[0].class==='dog') {
+        set(ref(DB, 'ObjectDetection/dogDetected'), true);
+      } else {
+        set(ref(DB, 'ObjectDetection/dogDetected'), false);
+      }
     }
+    catch(err){
+      console.log(err);
+    }
+    console.log(predictions);
   };
 
   return (
@@ -100,7 +104,7 @@ function VideoSection() {
         <div className="video-details">
           {predictions.map((prediction) => (
             <div key={prediction.class}>
-              <div className="video-details-class">{prediction.class == 'dog' ? "Dog Detected" : "No Dog Detected"}</div>
+              <div className="video-details-class">{prediction.class === 'dog' ? "Dog Detected" : "No Dog Detected"}</div>
             </div>
           ))}
         </div>
