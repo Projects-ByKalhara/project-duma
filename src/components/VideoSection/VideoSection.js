@@ -8,14 +8,12 @@ import DB from '../../Database/Firebase';
 import "@tensorflow/tfjs-backend-cpu";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
-function VideoSection() {
+function VideoSection(props) {
   const [image, setImage] = useState('');
   const [predictions, setPredictions] = useState([]);
-  const [checkedVideo, setCheckedVideo] = useState(false);
   const imageNewRef = useRef();
   let imageUrl = `data:image/jpg;base64,${image}`;
   imageUrl = imageUrl.replace(/[""]/g, '');
-
 
   useEffect(() => {
     const imageRef = ref(DB, 'Video/image');
@@ -30,18 +28,7 @@ function VideoSection() {
       await detectObjectsOnImage(imageElement);
     };
 
-    const videoRef = ref(DB, 'ObjectDetection/videoStatus');
-    onValue(videoRef, (snapshot) => {
-      const data = snapshot.val();
-      setCheckedVideo(data);
-    }
-    );
   }, []);
-
-  const handleChangeVideo = () => {
-    setCheckedVideo(!checkedVideo);
-    set(ref(DB, 'ObjectDetection/videoStatus'), !checkedVideo);
-  };
 
   const normalizePredictions = (predictions, imgSize) => {
     if (!predictions || !imgSize || !imageNewRef) return predictions || [];
@@ -92,9 +79,9 @@ function VideoSection() {
           <ToggleButton className="col-5 btn" id="checkedVideo"
             type="checkbox"
             variant='outline-primary'
-            checked={checkedVideo}
-            onChange={() => handleChangeVideo()} >
-            {checkedVideo ? 'Stop' : 'Start'}
+            checked={props.currentMode === 3 ? true : false}
+            onChange={() => props.handleModeChange(3)} >
+            {props.currentMode === 3 ? 'Stop' : 'Start'}
           </ToggleButton>
         </div>
         <div className="video-content">

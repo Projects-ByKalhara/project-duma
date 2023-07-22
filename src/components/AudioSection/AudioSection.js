@@ -6,7 +6,7 @@ import { ref, onValue, set } from "firebase/database";
 import DB from '../../Database/Firebase';
 import { ToggleButton } from 'react-bootstrap';
 
-function AudioSection() {
+function AudioSection(props) {
   const [audioPlay, setAudioPlay] = useState(false);
 
   useEffect(() => {
@@ -31,14 +31,36 @@ function AudioSection() {
         <div className="audio-content">
           <ToggleButton
             className=" audio-btn"
-            id="audioPlay"
+            id="audio1"
             type="checkbox"
             variant="outline-primary"
-            checked={audioPlay}
+            checked={props.currentMode === 4 ? true : false}
             value="2"
-            onChange={handleChangeAudioPlay}
+            onChange={() => props.handleModeChange(4)}
           >
-            {audioPlay ? 'Stop Voice' : 'Start Voice'}
+            {props.currentMode === 4 ? 'Stop Voice 1' : 'Start Voice 1'}
+          </ToggleButton>
+          <ToggleButton
+            className=" audio-btn"
+            id="audio2"
+            type="checkbox"
+            variant="outline-primary"
+            checked={props.currentMode === 5 ? true : false}
+            value="2"
+            onChange={() => props.handleModeChange(5)}
+          >
+            {props.currentMode === 5 ? 'Stop Voice 2' : 'Start Voice 2'}
+          </ToggleButton>
+          <ToggleButton
+            className=" audio-btn"
+            id="audio3"
+            type="checkbox"
+            variant="outline-primary"
+            checked={props.currentMode === 6 ? true : false}
+            value="2"
+            onChange={() => props.handleModeChange(6)}
+          >
+            {props.currentMode === 6 ? 'Stop Voice 3' : 'Start Voice 3'}
           </ToggleButton>
         </div>
       </div>
@@ -47,3 +69,4 @@ function AudioSection() {
 }
 
 export default AudioSection
+
