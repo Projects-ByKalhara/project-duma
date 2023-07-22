@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/project-duma/static/css/main.0239faec.css",
-    "main.js": "/project-duma/static/js/main.7ffcb221.js",
+    "main.css": "/project-duma/static/css/main.8d06b080.css",
+    "main.js": "/project-duma/static/js/main.9c60fd0a.js",
     "static/js/787.64e834a6.chunk.js": "/project-duma/static/js/787.64e834a6.chunk.js",
     "index.html": "/project-duma/index.html",
-    "main.0239faec.css.map": "/project-duma/static/css/main.0239faec.css.map",
-    "main.7ffcb221.js.map": "/project-duma/static/js/main.7ffcb221.js.map",
+    "main.8d06b080.css.map": "/project-duma/static/css/main.8d06b080.css.map",
+    "main.9c60fd0a.js.map": "/project-duma/static/js/main.9c60fd0a.js.map",
     "787.64e834a6.chunk.js.map": "/project-duma/static/js/787.64e834a6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0239faec.css",
-    "static/js/main.7ffcb221.js"
+    "static/css/main.8d06b080.css",
+    "static/js/main.9c60fd0a.js"
   ]
 }
