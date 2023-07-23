@@ -38,3 +38,15 @@
     position: relative;
     top:-18px;
 }
+
+.warning-text-bad{
+    color: red;
+}
+
+.warning-text-normal{
+    color: yellow;
+}
+
+.warning-text-good{
+    color: rgb(8, 109, 224);
+}
