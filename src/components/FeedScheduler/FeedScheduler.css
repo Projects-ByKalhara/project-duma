@@ -1,5 +1,5 @@
 .schedule-outer{
-    height: auto;
+    height: fit-content;
     justify-content: center;
     border: 3px solid #BFD7ED;
     border-radius: 10px;
@@ -20,7 +20,7 @@
 }
 
 .schedule-content{
-    width: 100%;
+    width: auto;
     height: auto;
     display:flex;
     align-items: center;
@@ -29,19 +29,20 @@
 }
 
 .schedule-title {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
     color: #BFD7ED;
-    width: 40px;
+    width: auto;
+    align-items: center;
 }
 
 .schedule-input{
-    width: 100%;
-    height: 100%;
+    width: 60px;
+    height: 20px;
     font-size: 20px;
     font-weight: bold;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;

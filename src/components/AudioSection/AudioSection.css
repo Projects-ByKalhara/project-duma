@@ -1,5 +1,5 @@
 .audio-outer{
-    height: 80px;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: left;
@@ -30,15 +30,16 @@
     font-size: 15px;
     font-weight: bold;
     color:#BFD7ED;
-    margin-bottom: 10px;
-    text-align: left;
+    text-align: center;
     position: relative;
     top:-18px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 .audio-btn{
-    width: fit-content;
+    width: 200px;
+    height: auto;
+    margin:2px;
 }

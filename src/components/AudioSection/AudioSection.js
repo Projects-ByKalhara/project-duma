@@ -28,7 +28,7 @@ function AudioSection(props) {
         <div className="audio-title">
           Voice
         </div>
-        <div className="audio-content">
+        <div className="audio-content d-block">
           <ToggleButton
             className=" audio-btn"
             id="audio1"
