@@ -18,14 +18,6 @@ function FeedScheduler(props) {
     let [countSchedule2, setCountSchedule2] = useState(0);
     let [countSchedule3, setCountSchedule3] = useState(0);
 
-    const schedule1Ref = ref(DB, 'Schedule/schedule1');
-    const schedule2Ref = ref(DB, 'Schedule/schedule2');
-    const schedule3Ref = ref(DB, 'Schedule/schedule3');
-    const countSchedule1Ref = ref(DB, 'Schedule/countSchedule1');
-    const countSchedule2Ref = ref(DB, 'Schedule/countSchedule2');
-    const countSchedule3Ref = ref(DB, 'Schedule/countSchedule3');
-
-
     const handleSave = () => {
         const value1 = document.getElementById('schedule1').value;
         const value2 = document.getElementById('schedule2').value;
@@ -61,7 +53,6 @@ function FeedScheduler(props) {
         set(ref(DB, 'Schedule/countSchedule1'), 0);
         set(ref(DB, 'Schedule/countSchedule2'), 0);
         set(ref(DB, 'Schedule/countSchedule3'), 0);
-
 
     }
 
@@ -111,34 +102,25 @@ function FeedScheduler(props) {
             let schedule2var = 0;
             let schedule3var = 0;
 
-            console.log(hour);
-
             const schedule1varref = ref(DB, 'Schedule/schedule1');
             const schedule2varref = ref(DB, 'Schedule/schedule2');
             const schedule3varref = ref(DB, 'Schedule/schedule3');
 
             onValue(schedule1varref, (snapshot) => {
                 schedule1var = snapshot.val();
-                console.log(schedule1var);
             });
             onValue(schedule2varref, (snapshot) => {
                 schedule2var = snapshot.val();
-                console.log(schedule2var);
             });
             onValue(schedule3varref, (snapshot) => {
                 schedule3var = snapshot.val();
-                console.log(schedule3var);
             });
-
-
-            console.log(schedule1var + ' ' + schedule2var + ' ' + schedule3var);
 
             if (hour < 6 || hour > 22) {
                 handleReset();
                 props.handleModeChange(0);
             } else if ((hour == schedule1var) && (countSchedule1 === 0)) {
                 props.handleModeChange(1);
-                console.log("Schedule 1");
                 setCountSchedule1(1);
                 setSchedule1(0);
                 set(ref(DB, 'Schedule/schedule1'), 0);	
@@ -146,7 +128,6 @@ function FeedScheduler(props) {
                 document.getElementById('schedule1').value = 0;
             } else if ((hour == schedule2var) && (countSchedule2 < 1)) {
                 props.handleModeChange(1);
-                console.log("Schedule 2");
                 setCountSchedule2(1);
                 setSchedule2(0);
                 set(ref(DB, 'Schedule/schedule2'), 0);
@@ -154,7 +135,6 @@ function FeedScheduler(props) {
                 document.getElementById('schedule2').value = 0;
             } else if ((hour == schedule3var) && (countSchedule3 < 1)) {
                 props.handleModeChange(1);
-                console.log("Schedule 3");
                 setCountSchedule3(1);
                 setSchedule3(0);
                 set(ref(DB, 'Schedule/schedule3'), 0);
@@ -163,6 +143,7 @@ function FeedScheduler(props) {
             }
         }, 6000);
 
+        
         return () => {
             clearInterval(checkFeedSchedule);
         }

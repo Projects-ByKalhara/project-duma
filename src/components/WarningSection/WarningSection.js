@@ -3,7 +3,6 @@ import React from 'react'
 import './WarningSection.css'
 import { Container } from 'react-bootstrap'
 
-
 function WarningSection() {
   return (
     <Container>

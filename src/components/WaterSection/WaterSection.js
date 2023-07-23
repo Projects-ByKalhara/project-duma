@@ -15,7 +15,6 @@ function WaterSection() {
             const data = snapshot.val();
             setWaterLevel(data);
         });
-
     }, []);
 
 

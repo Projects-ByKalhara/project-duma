@@ -1,10 +1,6 @@
 import React from 'react'
 import { Container, ToggleButton } from 'react-bootstrap'
 import './ModeSelection.css'
-import { useState, useEffect } from 'react';
-import { ref, onValue, set } from "firebase/database";
-import DB from '../../Database/Firebase';
-import { setOpHandler } from '@tensorflow/tfjs-core/dist/tensor';
 
 function ModeSelection(props) {
 
