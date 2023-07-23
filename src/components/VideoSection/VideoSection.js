@@ -91,7 +91,7 @@ function VideoSection(props) {
         <div className="video-details">
           {predictions.map((prediction) => (
             <div key={prediction.class}>
-              <div className="video-details-class">{prediction.class === 'dog' ? "Dog Detected" : "No Dog Detected"}</div>
+              {((props.currentMode === 3) ? <div className="video-details-class">Detecting ...</div> : <div className="video-details-class">{prediction.class === 'dog' ? "Dog Detected" : "No Dog Detected"}</div>)}
             </div>
           ))}
         </div>
