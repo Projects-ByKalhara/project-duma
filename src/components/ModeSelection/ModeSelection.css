@@ -1,0 +1,20 @@
+.modes-outer{
+    border: 3px solid #BFD7ED;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.modes-title{
+    width: fit-content;
+    margin-left: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    position: relative;
+    top: -18px;
+    color: #BFD7ED;
+    background-color: #050A30;
+}
+.btn{
+    margin-bottom:10px;
+}

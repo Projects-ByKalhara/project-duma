@@ -6,7 +6,7 @@ function HeaderSection() {
     return (
         <Container>
             <div className="header-outer">
-                Pet CareTaker
+                DUMA
             </div>
         </Container>
 

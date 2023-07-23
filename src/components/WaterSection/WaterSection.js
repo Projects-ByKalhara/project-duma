@@ -1,10 +1,10 @@
 import React from 'react'
 import "./WaterSection.css"
-import { Container, } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useState, useEffect } from 'react';
 import DB from '../../Database/Firebase';
-import { ref, onValue} from "firebase/database";
+import { ref, onValue } from "firebase/database";
 
 function WaterSection() {
     const [waterLevel, setWaterLevel] = useState(0)
@@ -12,21 +12,24 @@ function WaterSection() {
     useEffect(() => {
         const waterLevelRef = ref(DB, 'Water/waterLevel');
         onValue(waterLevelRef, (snapshot) => {
-          const data = snapshot.val();
-          setWaterLevel(data);
+            const data = snapshot.val();
+            setWaterLevel(data);
         });
-    
-      }, []);
+
+    }, []);
 
 
     return (
         <Container>
-            <div className="w-title">
-                Water Level
+            <div className="water-section-outer">
+                <div className="w-title">
+                    Water Level
+                </div>
+                <div className="w-content">
+                    <ProgressBar className="water-progress" now={waterLevel} label={waterLevel} />
+                </div>
             </div>
-            <div className="w-indicator">
-                <ProgressBar className="water-progress" now={waterLevel} label={waterLevel} />
-            </div>
+
         </Container>
     )
 }

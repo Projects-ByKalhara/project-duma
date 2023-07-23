@@ -1,57 +1,80 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import "./Dashboard.css";
 import WarningSection from '../components/WarningSection/WarningSection';
-import FeedSection from '../components/FeedSection/FeedSection';
-import EntertainmentSection from '../components/EntertainmentSection/EntertainmentSection';
 import VideoSection from '../components/VideoSection/VideoSection';
 import AudioSection from '../components/AudioSection/AudioSection';
 import HeaderSection from '../components/HeaderSection/HeaderSection';
 import WaterSection from '../components/WaterSection/WaterSection';
+import ModeSelection from '../components/ModeSelection/ModeSelection';
+import FeedScheduler from '../components/FeedScheduler/FeedScheduler';
+import { useState, useEffect } from 'react';
+import { ref, onValue ,set } from "firebase/database";
+import DB from '../Database/Firebase';
+
+function Dashboard(mode) {
+  let [currentMode, setCurrentMode] = useState(0);
+
+  useEffect(() => {
+    const modeRef = ref(DB, 'Mode/currentMode');
+    onValue(modeRef, (snapshot) => {
+      const data = snapshot.val();
+      setCurrentMode(data);
+    });
+  }, []);
+
+  set(ref(DB, 'Mode/currentMode'), currentMode);
+
+  const handleModeChange = (mode) => {
+    if (currentMode === mode) {
+      setCurrentMode(0);
+    } else {
+      setCurrentMode(mode);
+    }
+  }
+
+    return (
+      <>
+        <Container className='container-outer col-md-4 col-10'>
+          <Row>
+            <Col>
+              <HeaderSection />
+            </Col>
+          </Row>
+          <Row >
+            <Col >
+              <WarningSection />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <ModeSelection currentMode={currentMode} handleModeChange={(mode) => handleModeChange(mode)} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FeedScheduler handleModeChange={(mode) => handleModeChange(mode)}/>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <WaterSection />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <VideoSection currentMode={currentMode} handleModeChange={(mode) => handleModeChange(mode)}/>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <AudioSection currentMode={currentMode} handleModeChange={(mode) => handleModeChange(mode)}/>
+            </Col>
+          </Row>
+        </Container>
+      </>
+    )
+  }
 
 
-function Dashboard() {
-
-  return (
-    <>
-      <Container className='container-outer col-md-6 '>
-        <Row className="colb">
-          <Col>
-            <HeaderSection />
-          </Col>
-        </Row>
-        <Row className="justify-content-center colb">
-          <Col >
-            <WarningSection />
-          </Col>
-        </Row>
-        <Row className='justify-content-center colb'>
-          <Col className="colb">
-            <FeedSection />
-          </Col>
-          <Col className='colb'>
-            <EntertainmentSection />
-          </Col>
-        </Row>
-        <Row>
-          <Col className='colb'>
-            <WaterSection />
-          </Col>
-        </Row>
-        <Row className="colb">
-          <Col>
-            <VideoSection />
-          </Col>
-        </Row>
-        <Row className="colb">
-          <Col>
-            <AudioSection />
-          </Col>
-        </Row>
-      </Container>
-    </>
-  )
-}
-
-
-export default Dashboard
+  export default Dashboard

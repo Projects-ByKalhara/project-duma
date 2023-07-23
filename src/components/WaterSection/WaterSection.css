@@ -1,13 +1,40 @@
-.w-title{
-    font-size: 20px;
-    font-weight: bold;
-    color: #d50d0d;
-    margin-bottom: 10px;
+.water-section-outer{
+    width: 100%;
+    margin-top:30px;
+    height: 70px;
+    border: 2px solid #BFD7ED;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
 }
 
-.w-indicator{
+.w-title{
+    width: fit-content;
+    margin-left: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
     font-size: 20px;
     font-weight: bold;
-    color: #d50d0d;
-    margin-bottom: 10px;
+    position: relative;
+    top: -28px;
+    color: #BFD7ED;
+    background-color: #050A30;
+}
+
+.w-content{
+    width:100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.water-progress{
+    position: relative;
+    top: -10px;
+    width: 90%;
+    font-size: 14px;
+    font-weight: bold;
 }
