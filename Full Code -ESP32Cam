@@ -1,0 +1,283 @@
+#include <Arduino.h>
+#include <WiFi.h>
+#include <FirebaseESP32.h>
+#include "esp_camera.h"
+#include <base64.h>
+#include "HX711.h"
+#include "soc/rtc.h"
+
+//wifi & Database Connection Details
+#define WIFI_SSID "abc"
+#define WIFI_PASSWORD "abcabc12"
+#define API_KEY "0CwAD4ik0fuXSTCY5k4rsnXYNh5ks4EexTdEezv4"
+#define DATABASE_URL "https://project-duma-80aed-default-rtdb.firebaseio.com"
+
+//CAMERA_MODEL_AI_THINKER
+#define PWDN_GPIO_NUM 32
+#define RESET_GPIO_NUM -1
+#define XCLK_GPIO_NUM 0
+#define SIOD_GPIO_NUM 26
+#define SIOC_GPIO_NUM 27
+#define Y9_GPIO_NUM 35
+#define Y8_GPIO_NUM 34
+#define Y7_GPIO_NUM 39
+#define Y6_GPIO_NUM 36
+#define Y5_GPIO_NUM 21
+#define Y4_GPIO_NUM 19
+#define Y3_GPIO_NUM 18
+#define Y2_GPIO_NUM 5
+#define VSYNC_GPIO_NUM 25
+#define HREF_GPIO_NUM 23
+#define PCLK_GPIO_NUM 22
+
+#define SIGNAL_PIN 15  // Water level sensor's signal pin
+int WaterValue = 0;    // variable to store the sensor value
+
+const int LOADCELL_DOUT_PIN = 12;
+const int LOADCELL_SCK_PIN = 13;
+
+HX711 scale;
+
+
+long weight1 = 0.0;
+
+String urlencode(String str);
+
+FirebaseData fbdo;
+FirebaseConfig config;
+FirebaseJsonArray feedArr;
+
+const int trigPin = 2;
+const int echoPin = 14;
+long duration;
+int distance;
+
+String Photo2Base64() {
+  camera_fb_t *fb = NULL;
+  fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    return "";
+  }
+  String imageFile = "data:image/jpeg;base64,";
+  String encrypt = base64::encode(fb->buf, fb->len);
+  esp_camera_fb_return(fb);
+  return encrypt;
+}
+
+String urlencode(String str) {
+  String encodedString = "";
+  char c;
+  char code0;
+  char code1;
+  char code2;
+  for (int i = 0; i < str.length(); i++) {
+    c = str.charAt(i);
+    if (c == ' ') {
+      encodedString += '+';
+    } else if (isalnum(c)) {
+      encodedString += c;
+    } else {
+      code1 = (c & 0xf) + '0';
+      if ((c & 0xf) > 9) {
+        code1 = (c & 0xf) - 10 + 'A';
+      }
+      c = (c >> 4) & 0xf;
+      code0 = c + '0';
+      if (c > 9) {
+        code0 = c - 10 + 'A';
+      }
+      code2 = '\0';
+      encodedString += '%';
+      encodedString += code0;
+      encodedString += code1;
+      encodedString += code2;
+    }
+    yield();
+  }
+  return encodedString;
+}
+
+void setupCamera() {
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+
+  config.frame_size = FRAMESIZE_SVGA;
+  config.jpeg_quality = 12;  // 0-63 lower number means higher quality
+  config.fb_count = 1;
+
+  // camera init
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    delay(1000);
+    ESP.restart();
+  }
+  sensor_t *s = esp_camera_sensor_get();
+  s->set_framesize(s, FRAMESIZE_QVGA);  // VGA|CIF|QVGA|HQVGA|QQVGA   ( UXGA? SXGA? XGA? SVGA? )
+}
+
+void startStreaming() {
+  FirebaseJson json2;
+  for (int i = 0; i < 5; i++) {
+    json2.set("image", Photo2Base64());
+    if (Firebase.setJSON(fbdo, "/Video", json2)) {
+      // Serial.println("Image Uploaded");
+    } else {
+      // Serial.println(fbdo.errorReason());
+    }
+    delay(3000);
+  }
+}
+
+// void feedMode() {
+
+//   int tempArr[6];
+
+
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det1"))
+//     tempArr[0] = fbdo.intData();
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det2"))
+//     tempArr[1] = fbdo.intData();
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det3"))
+//     tempArr[2] = fbdo.intData();
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det4"))
+//     tempArr[3] = fbdo.intData();
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det5"))
+//     tempArr[4] = fbdo.intData();
+//   if (Firebase.RTDB.getInt(&fbdo, "/Feed/det6"))
+//     tempArr[5] = fbdo.intData();
+
+//   for (int i = 0; i < 5; i++) {
+//     tempArr[i] = tempArr[i + 1];
+//   }
+
+//   //set New Feed Value;
+//   tempArr[5] = 50;  //feedValue;
+//   int average=0;
+
+//   for(int i=0 ; i<6 ; i++){
+//     average = average + tempArr[i];
+//   }
+
+//   Firebase.setInt(fbdo, "Feed/det1", tempArr[0]);
+//   Firebase.setInt(fbdo, "Feed/det2", tempArr[1]);
+//   Firebase.setInt(fbdo, "Feed/det3", tempArr[2]);
+//   Firebase.setInt(fbdo, "Feed/det4", tempArr[3]);
+//   Firebase.setInt(fbdo, "Feed/det5", tempArr[4]);
+//   Firebase.setInt(fbdo, "Feed/det6", tempArr[5]);
+//   Firebase.setInt(fbdo,"Feed/average",average);
+// }
+
+void setup() {
+
+  Serial.begin(115200);
+  delay(2000);
+  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+  setupCamera();
+  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_80M);
+  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+  scale.set_scale(430);
+  scale.tare();
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  // Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    // Serial.print(".");
+    delay(300);
+  }
+
+  config.api_key = API_KEY;
+  config.database_url = DATABASE_URL;
+  Firebase.begin(DATABASE_URL, API_KEY);
+
+  pinMode(trigPin, OUTPUT);  // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT);   // Sets the echoPin as an Input
+}
+
+void loop() {
+  if (Firebase.ready()) {
+    String x = Firebase.getInt(fbdo, "/Mode/currentMode") ? String(fbdo.to<int>()).c_str() : fbdo.errorReason().c_str();
+    if (x == "1") {
+      Serial.write(1);
+      delay(10000);
+      // Clears the trigPin
+
+      digitalWrite(trigPin, LOW);
+      delayMicroseconds(2);
+      // Sets the trigPin on HIGH state for 10 micro seconds
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration = pulseIn(echoPin, HIGH);
+      // Calculating the distance
+      distance = duration * 0.034 / 2;
+      Firebase.setInt(fbdo, "Ultra/distance", distance);
+
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } 
+    else if (x == "2") {
+      Serial.write(2);
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if (x == "3") {
+      startStreaming();
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if (x == "4") {
+      Serial.write(4);
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if (x == "5") {
+      Serial.write(5);
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if (x == "6") {
+      Serial.write(6);
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if (x == "25") {
+      // feedMode();
+      Firebase.setInt(fbdo, "Mode/currentMode", 0);
+    } else if(x == "20"){
+      WaterValue = analogRead(SIGNAL_PIN);
+      Firebase.setInt(fbdo, "Water/waterLevel", WaterValue);
+
+      Firebase.setInt(fbdo,"Weight/value",scale.get_units(10),1);
+      
+      // digitalWrite(trigPin, LOW);
+      // delayMicroseconds(2);
+      // // Sets the trigPin on HIGH state for 10 micro seconds
+      // digitalWrite(trigPin, HIGH);
+      // delayMicroseconds(10);
+      // digitalWrite(trigPin, LOW);
+      // // Reads the echoPin, returns the sound wave travel time in microseconds
+      // duration = pulseIn(echoPin, HIGH);
+      // // Calculating the distance
+      // distance = duration * 0.034 / 2;
+      // Firebase.setInt(fbdo, "Ultra/distance", distance);
+      weight1 = scale.get_units();
+      int weightInt = (int)weight1; 
+
+      Firebase.setInt(fbdo,"Weight/value",weightInt);
+      
+    }else{
+
+    }
+  }
+  delay(3000);
+}
