@@ -1,0 +1,221 @@
+#include <SoftwareSerial.h>
+#include "DFRobotDFPlayerMini.h"
+#include <Servo.h> 
+
+SoftwareSerial mySerial(11, 12); // RX, TX pins for SoftwareSerial for ESP32Cam Communication
+
+// Use pins 6 and 5 to communicate with DFPlayer Mini
+static const uint8_t PIN_MP3_TX = 6; // Connects to module's RX 
+static const uint8_t PIN_MP3_RX = 5; // Connects to module's TX 
+SoftwareSerial softwareSerial(PIN_MP3_RX, PIN_MP3_TX);
+
+// Create the Player object
+DFRobotDFPlayerMini player;
+
+
+
+// Declare the Relay pins 
+int RelayPin1 = 2;
+int RelayPin2 = 3;
+
+
+// Declare the Stepper pins 
+const int stepPin = 7; 
+const int dirPin = 8;
+
+Servo BroomServo,FoodServo,EntServo;  // creating servo objects
+int pos = 0;    // variable to store the servo position
+
+
+void setup() {
+  
+  BroomServo.attach(9);  // attaches the servo on pin 9 to the servo object
+  FoodServo.attach(10);
+  EntServo.attach(4);
+  BroomServo.write(0); 
+  FoodServo.write(0); 
+  EntServo.write(0); 
+
+  // pinMode(13,OUTPUT); //Debugging LED
+  // digitalWrite(13,LOW);
+  
+  pinMode(RelayPin1, OUTPUT);
+  pinMode(RelayPin2, OUTPUT);
+  //Turn off 2 relays (Active LOW)
+  digitalWrite(RelayPin1, HIGH); 
+  digitalWrite(RelayPin2, HIGH);
+  
+  //Sets the Stepper pins as Outputs
+  pinMode(stepPin,OUTPUT); 
+  pinMode(dirPin,OUTPUT);
+
+
+  softwareSerial.begin(9600); // Software serial port to communicate with DFplayer
+  
+  if (player.begin(softwareSerial)) {
+          
+        // Set volume to maximum (0 to 30).
+        player.volume(30);
+        // player.play(1);
+        // Play the first MP3 file on the SD card
+        
+  } 
+
+  mySerial.begin(115200); // Software serial port to communicate with ESP32Cam
+  mySerial.listen();    
+}
+void MiniTrayOut(){
+      digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+      // Makes 200 pulses for making one full cycle rotation
+      for(int x = 0; x < 40; x++) {
+        digitalWrite(stepPin,HIGH); 
+        delayMicroseconds(1500); 
+        digitalWrite(stepPin,LOW); 
+        delayMicroseconds(1500); 
+      }
+}
+// void MiniTrayIn(){
+//       digitalWrite(dirPin,LOW); //Changes the rotations direction
+//       // Makes 400 pulses for making two full cycle rotation
+//       for(int x = 0; x < 40; x++) {
+//         digitalWrite(stepPin,HIGH);
+//         delayMicroseconds(1500);
+//         digitalWrite(stepPin,LOW);
+//         delayMicroseconds(1500);
+//       }
+// }
+void TrayOut(){
+      digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+      // Makes 200 pulses for making one full cycle rotation
+      for(int x = 0; x < 200; x++) {
+        digitalWrite(stepPin,HIGH); 
+        delayMicroseconds(1500); 
+        digitalWrite(stepPin,LOW); 
+        delayMicroseconds(1500); 
+      }
+}
+
+void TrayIn(){
+      digitalWrite(dirPin,LOW); //Changes the rotations direction
+      // Makes 400 pulses for making two full cycle rotation
+      for(int x = 0; x < 240; x++) {
+        digitalWrite(stepPin,HIGH);
+        delayMicroseconds(1500);
+        digitalWrite(stepPin,LOW);
+        delayMicroseconds(1500);
+      }
+}
+
+
+void CleanUp(){
+      //Lowering the Broom
+      for (pos = 0; pos <= 160; pos += 1) {   // goes from 0 degrees to 180 degrees in steps of 1 degree
+      BroomServo.write(pos);                     // tell servo to go to position in variable 'pos'
+      delay(15);                              // waits 15ms for the servo to reach the position
+      }
+      delay(1000);
+
+
+      //Moving the Tray Out and in to Clean
+      MiniTrayOut();
+      TrayOut();
+      delay(2000); 
+
+      TrayIn();
+      delay(2000);  
+
+      BroomServo.write(0);        // tell servo to go to position 0
+      delay(1000);
+}
+
+
+
+
+
+void loop() {
+  
+  if (mySerial.available()) {
+    char data = mySerial.read();
+
+    if(data == 1) // Food Fall Servo
+    {
+
+      MiniTrayOut();
+      FoodServo.write(180);
+      delay(2000);
+      FoodServo.write(0);
+      delay(1000); 
+      TrayOut();
+      
+
+    }
+    if(data == 3) // TrayIn & Cleaning
+    {
+      TrayIn();
+      delay(1000);
+      CleanUp();
+      CleanUp();
+    }
+
+
+    else if(data == 2) // Entertainment Mode
+    {
+      EntServo.write(180);
+      delay(500);
+      EntServo.write(0); 
+      delay(1000);
+      digitalWrite(RelayPin1, LOW);
+      digitalWrite(RelayPin2, LOW);
+      delay(3000);
+      digitalWrite(RelayPin1, HIGH);
+      digitalWrite(RelayPin2, HIGH);
+      // counter3 = Ctime;
+    }
+
+
+    else if(data == 4) // Audio 1
+    {
+      softwareSerial.listen();  
+      player.play(1);
+      delay(5000);
+      player.pause();
+      // player.pause();
+      mySerial.listen();       
+    }
+    
+
+    else if(data == 5) // Audio 2
+    {
+      softwareSerial.listen();  
+      player.play(2);
+      delay(5000);
+      player.pause();
+      mySerial.listen();       
+    }
+
+    else if(data == 6) // Audio 3
+    {
+      softwareSerial.listen();  
+      player.play(3);
+      delay(5000);
+      player.pause();
+      // player.pause();
+      mySerial.listen();       
+    }
+
+
+    else if(data == 9) //Water Refill - Soloniod ON
+    {
+      digitalWrite(RelayPin2,LOW);      
+    }
+    
+    else if(data == 0) //Water Refill - Soloniod OFF
+    {
+      digitalWrite(RelayPin2,HIGH);      
+    }
+
+  }
+
+  
+
+}
